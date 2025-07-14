@@ -1,0 +1,89 @@
+version: '3.8'
+
+services:
+  api-gateway:
+    build: ./api-gateway
+    ports:
+      - "3000:3000"
+    environment:
+      - GATEWAY_PORT=3000
+    depends_on:
+      - auth-service
+      - user-service
+      - blog-service
+      - comment-service
+
+  auth-service:
+    build: ./auth-service
+    ports:
+      - "3001:3001"
+    environment:
+      - PORT=3001
+      - JWT_SECRET=your_jwt_secret_here
+      - AUTH_MONGO_URI=mongodb://auth-db:27017/auth_db
+    depends_on:
+      - auth-db
+
+  user-service:
+    build: ./user-service
+    ports:
+      - "3002:3002"
+    environment:
+      - PORT=3002
+      - USER_MONGO_URI=mongodb://user-db:27017/user_db
+    depends_on:
+      - user-db
+
+  blog-service:
+    build: ./blog-service
+    ports:
+      - "3003:3003"
+    environment:
+      - PORT=3003
+      - BLOG_MONGO_URI=mongodb://blog-db:27017/blog_db
+    depends_on:
+      - blog-db
+
+  comment-service:
+    build: ./comment-service
+    ports:
+      - "3004:3004"
+    environment:
+      - PORT=3004
+      - COMMENT_MONGO_URI=mongodb://comment-db:27017/comment_db
+    depends_on:
+      - comment-db
+
+  auth-db:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - auth-data:/data/db
+
+  user-db:
+    image: mongo:latest
+    ports:
+      - "27018:27017"
+    volumes:
+      - user-data:/data/db
+
+  blog-db:
+    image: mongo:latest
+    ports:
+      - "27019:27017"
+    volumes:
+      - blog-data:/data/db
+
+  comment-db:
+    image: mongo:latest
+    ports:
+      - "27021:27017"
+    volumes:
+      - comment-data:/data/db
+
+volumes:
+  auth-data:
+  user-data:
+  blog-data:
+  comment-data:
